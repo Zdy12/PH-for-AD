@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the associated paper."
+title: "Interpretable multiscale topological features from fMRI"
+type: software
+authors:
+  - family-names: Zhao
+    given-names: Dengyi
+version: 1.0.0
+date-released: 2026-09-02
+preferred-citation:
+  type: article
+  title: "Extracting interpretable higher-order topological features across multiple scales from fMRI for Alzheimer's disease classification"
+  authors:
+    - family-names: Zhao
+      given-names: Dengyi
+    - family-names: Li
+      given-names: Shanyong
+    - family-names: Wang
+      given-names: Yunping
+    - family-names: Wang
+      given-names: Chenfei
+    - family-names: Zhou
+      given-names: Zhiheng
+    - family-names: Yan
+      given-names: Guiying
+    - family-names: Qi
+      given-names: Xingqin
+  journal: "Biomedical Signal Processing and Control"
+  volume: 116
+  year: 2026
+  article-number: 109621
+  doi: 10.1016/j.bspc.2026.109621
+

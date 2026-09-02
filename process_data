@@ -1,0 +1,139 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+
+
+import numpy as np
+# .conda/lib/python3.8/site-packages/gph/python/ripser_interface.py
+
+from gtda.diagrams import PersistenceLandscape,BettiCurve,HeatKernel,PersistenceEntropy
+from gtda.homology import VietorisRipsPersistence
+
+
+
+
+import numpy as np
+import os
+
+data1_X=[]
+folder_path1="./AD118/"
+files1=os.listdir(folder_path1)
+files1.sort()
+for filename in files1:
+    file_path = os.path.join(folder_path1, filename)
+    data_x = np.loadtxt(file_path)
+    data_x = 1-data_x
+    data1_X.append(data_x)
+    # break
+print(type(data_x),data_x.shape)
+print(type(data1_X),len(data1_X))
+
+data2_X=[]
+folder_path2="./CN118/"
+files2=os.listdir(folder_path2)
+files2.sort()
+for filename in files2:
+    file_path = os.path.join(folder_path2, filename)
+    data_x = np.loadtxt(file_path)
+    data_x = 1-data_x
+    data2_X.append(data_x)
+    # break
+print(type(data_x),data_x.shape)
+print(type(data2_X),len(data2_X))
+
+
+
+from gtda.diagrams import PersistenceLandscape,BettiCurve,HeatKernel,PersistenceEntropy
+from gtda.homology import VietorisRipsPersistence
+# from gtda.pipeline import Pipeline
+
+VR = VietorisRipsPersistence(homology_dimensions=[0,1,2],metric="precomputed")
+#diagrams1 = VR.fit_transform(data1_X)
+#diagrams2 = VR.fit_transform(data2_X)
+data_X = np.concatenate((data1_X,data2_X),axis=0)
+diagrams1 = VR.fit_transform(data_X)
+# print(type(diagrams1),diagrams1.shape)
+# print(type(diagrams2),diagrams2.shape)
+
+LS1 = PersistenceLandscape(n_bins=100, n_layers=1, n_jobs=1)
+LS2 = PersistenceLandscape(n_bins=100, n_layers=2, n_jobs=1)
+BC1 = BettiCurve(n_bins=100, n_jobs=1)
+heat1 = HeatKernel(n_bins=10, sigma=1.4, n_jobs=1)
+heat2 = HeatKernel(n_bins=10, sigma=2.8, n_jobs=1)
+persistence_entropy = PersistenceEntropy(nan_fill_value=4)
+
+
+
+# In[37]:
+
+
+data1_X_LS1 = LS1.fit_transform(diagrams1)
+# data2_X_LS1 = LS1.fit_transform(diagrams2)
+# print('LS1:',type(data1_X_LS1), data1_X_LS1.shape)
+# print('LS1:',type(data2_X_LS1), data2_X_LS1.shape)
+
+data1_X_LS2 = LS2.fit_transform(diagrams1)
+# data2_X_LS2 = LS2.fit_transform(diagrams2)
+print('LS2:',type(data1_X_LS2), data1_X_LS2.shape)
+# print('LS2:',type(data2_X_LS2), data2_X_LS2.shape)
+
+data1_X_BC1 = BC1.fit_transform(diagrams1)
+# data2_X_BC1 = BC1.fit_transform(diagrams2)
+print('BC1:',type(data1_X_BC1), data1_X_BC1.shape)
+# print('BC1:',type(data2_X_BC1), data2_X_BC1.shape)
+
+# data1_X_BC2 = BC2.fit_transform(diagrams1)
+# data2_X_BC2 = BC2.fit_transform(diagrams2)
+# print('BC2:',type(data1_X_BC2), data1_X_BC2.shape)
+# print('BC2:',type(data2_X_BC2), data2_X_BC2.shape)
+
+data1_X_heat1 = heat1.fit_transform(diagrams1)
+# data2_X_heat1 = heat1.fit_transform(diagrams2)
+print('heat1:',type(data1_X_heat1), data1_X_heat1.shape)
+# print('heat1:',type(data2_X_heat1), data2_X_heat1.shape)
+
+data1_X_heat2 = heat2.fit_transform(diagrams1)
+# data2_X_heat2 = heat2.fit_transform(diagrams2)
+print('heat2:',type(data1_X_heat2), data1_X_heat2.shape)
+# print('heat2:',type(data2_X_heat2), data2_X_heat2.shape)
+
+# data1_X_heat3 = heat3.fit_transform(diagrams1)
+# data2_X_heat3 = heat3.fit_transform(diagrams2)
+# print('heat3:',type(data1_X_heat3), data1_X_heat3.shape)
+# print('heat3:',type(data2_X_heat3), data2_X_heat3.shape)
+
+# data1_X_heat4 = heat4.fit_transform(diagrams1)
+# data2_X_heat4 = heat4.fit_transform(diagrams2)
+# print('heat4:',type(data1_X_heat4), data1_X_heat4.shape)
+# print('heat4:',type(data2_X_heat4), data2_X_heat4.shape)
+
+data1_X_persistence_entropy = persistence_entropy.fit_transform(diagrams1)
+# data2_X_persistence_entropy = persistence_entropy.fit_transform(diagrams2)
+print('persistence_entropy:',type(data1_X_persistence_entropy), data1_X_persistence_entropy.shape)
+# print('persistence_entropy:',type(data2_X_persistence_entropy), data2_X_persistence_entropy.shape)
+
+
+
+transfrom_list = ['LS1','LS2','BC1','persistence_entropy']
+for transfrom in transfrom_list:
+    path1 = "./data_processed1/" + transfrom + "/AD118/"
+    path2 = "./data_processed1/" + transfrom + "/CN118/"
+    os.makedirs(path1)
+    os.makedirs(path2)
+    for i in range(len(files1)):
+        np.savetxt(os.path.join(path1,files1[i]),eval('data1_X_'+transfrom)[i])
+    for i in range(len(files2)):
+        np.savetxt(os.path.join(path2,files2[i]),eval('data1_X_'+transfrom)[i+116])
+
+
+transfrom_list = ['heat1','heat2']
+for transfrom in transfrom_list:
+    path1 = "./data_processed1/" + transfrom + "/AD118/"
+    path2 = "./data_processed1/" + transfrom + "/CN118/"
+    os.makedirs(path1)
+    os.makedirs(path2)
+    for i in range(len(files1)):
+        np.save(os.path.join(path1,files1[i]),eval('data1_X_'+transfrom)[i])
+    for i in range(len(files2)):
+        np.save(os.path.join(path2,files2[i]),eval('data1_X_'+transfrom)[i+116])
+
